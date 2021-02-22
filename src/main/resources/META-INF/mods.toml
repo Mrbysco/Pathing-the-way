@@ -1,0 +1,14 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+#issueTrackerURL="https://github.com/Mrbysco/"
+license="MIT"
+
+[[mods]]
+modId="pathingtheway"
+version="${file.jarVersion}"
+displayName="Pathing The Way"
+#displayURL="https://www.curseforge.com/minecraft/mc-mods/"
+authors="Mrbysco, ShyNieke"
+description='''
+This mod allows you to use an assortment of tools to transform blocks into other blocks by right clicking as configured.
+'''
