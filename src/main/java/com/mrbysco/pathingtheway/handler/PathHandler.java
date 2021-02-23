@@ -55,7 +55,7 @@ public class PathHandler {
 								newState = newState.with(BlockStateProperties.HORIZONTAL_FACING, player.getHorizontalFacing());
 							}
 							if(newState.hasProperty(BlockStateProperties.HALF)) {
-								newState = newState.with(BlockStateProperties.HALF, direction != Direction.DOWN && (direction == Direction.UP || !(blockRayTraceResult.getHitVec().y - (double)pos.getY() > 0.5D)) ? Half.TOP : Half.BOTTOM);
+								newState = newState.with(BlockStateProperties.HALF, direction != Direction.DOWN && (direction == Direction.UP || !(blockRayTraceResult.getHitVec().y - (double)pos.getY() < 0.5D)) ? Half.BOTTOM : Half.TOP);
 							}
 							world.setBlockState(pos, newState);
 							if(!player.abilities.isCreativeMode) {
