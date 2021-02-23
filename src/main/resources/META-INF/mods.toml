@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="[36,)"
-#issueTrackerURL="https://github.com/Mrbysco/"
+issueTrackerURL="https://github.com/Mrbysco/Pathing-the-way/issues"
 license="MIT"
 
 [[mods]]
