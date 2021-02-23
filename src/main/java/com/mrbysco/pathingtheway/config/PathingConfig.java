@@ -39,7 +39,7 @@ public class PathingConfig {
 			pickaxeChiseling = builder
 					.comment("A list of additional chiseling behaviors using pickaxe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:stone,minecraft:stone_stairs\"]")
-					.defineList("pickaxePicking", Collections.singletonList(""), o -> isValidOption(o));
+					.defineList("pickaxeChiseling", Collections.singletonList(""), o -> isValidOption(o));
 
 			pickaxeSneaking = builder
 					.comment("Defines if sneaking is required to do custom chiseling using pickaxe's")
