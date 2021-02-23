@@ -6,6 +6,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.properties.Half;
+import net.minecraft.state.properties.SlabType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -23,9 +26,10 @@ public class PathHandler {
 	@SubscribeEvent
 	public void onServerStarting(RightClickBlock event) {
 		ItemStack stack = event.getItemStack();
-		BlockRayTraceResult hitVec = event.getHitVec();
-		BlockPos pos = hitVec.getPos();
+		BlockRayTraceResult blockRayTraceResult = event.getHitVec();
+		BlockPos pos = blockRayTraceResult.getPos();
 		World world = event.getWorld();
+		BlockState oldState = world.getBlockState(pos);
 		ResourceLocation blockLocation = world.getBlockState(pos).getBlock().getRegistryName();
 
 		if(blockLocation != null && !stack.isEmpty() && !stack.getToolTypes().isEmpty()) {
@@ -39,9 +43,19 @@ public class PathHandler {
 						Block block = ForgeRegistries.BLOCKS.getValue(newLoc);
 						if(block != null) {
 							BlockState newState = block.getDefaultState();
+							Direction direction = event.getFace();
 
+							if(oldState.hasProperty(BlockStateProperties.WATERLOGGED) && newState.hasProperty(BlockStateProperties.WATERLOGGED)) {
+								newState.with(BlockStateProperties.WATERLOGGED, oldState.get(BlockStateProperties.WATERLOGGED));
+							}
+							if(newState.hasProperty(BlockStateProperties.SLAB_TYPE) && direction != Direction.DOWN && !(direction == Direction.UP || !(blockRayTraceResult.getHitVec().y - (double)pos.getY() < 0.5D))) {
+								newState = newState.with(BlockStateProperties.SLAB_TYPE, SlabType.TOP);
+							}
 							if(newState.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
 								newState = newState.with(BlockStateProperties.HORIZONTAL_FACING, player.getHorizontalFacing());
+							}
+							if(newState.hasProperty(BlockStateProperties.HALF)) {
+								newState = newState.with(BlockStateProperties.HALF, direction != Direction.DOWN && (direction == Direction.UP || !(blockRayTraceResult.getHitVec().y - (double)pos.getY() > 0.5D)) ? Half.TOP : Half.BOTTOM);
 							}
 							world.setBlockState(pos, newState);
 							if(!player.abilities.isCreativeMode) {
