@@ -1,6 +1,7 @@
 package com.mrbysco.pathingtheway.handler;
 
 import com.mrbysco.pathingtheway.config.ConfigCache;
+import com.mrbysco.pathingtheway.config.PathingConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,7 +28,7 @@ public class PathHandler {
 	public void onServerStarting(RightClickBlock event) {
 		ItemStack stack = event.getItemStack();
 		BlockRayTraceResult blockRayTraceResult = event.getHitVec();
-		BlockPos pos = blockRayTraceResult.getPos();
+		BlockPos pos = event.getPos();
 		World world = event.getWorld();
 		BlockState oldState = world.getBlockState(pos);
 		ResourceLocation blockLocation = world.getBlockState(pos).getBlock().getRegistryName();
@@ -74,13 +75,13 @@ public class PathHandler {
 	public boolean isSneaking(ToolType type, PlayerEntity playerEntity) {
 		boolean flag = playerEntity.isSneaking();
 		if(type == ToolType.AXE) {
-			return flag == ConfigCache.axeSneaking;
+			return flag == PathingConfig.COMMON.axeSneaking.get();
 		} else if(type == ToolType.PICKAXE) {
-			return flag == ConfigCache.pickaxeSneaking;
+			return flag == PathingConfig.COMMON.pickaxeSneaking.get();
 		} else if(type == ToolType.HOE) {
-			return flag == ConfigCache.hoeSneaking;
+			return flag == PathingConfig.COMMON.hoeSneaking.get();
 		} else if(type == ToolType.SHOVEL) {
-			return flag == ConfigCache.shovelSneaking;
+			return flag == PathingConfig.COMMON.shovelSneaking.get();
 		}
 		return true;
 	}
