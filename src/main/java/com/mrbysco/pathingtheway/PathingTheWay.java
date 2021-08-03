@@ -11,10 +11,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod("pathingtheway")
-public class PathingTheWay
-{
-    public static final Logger LOGGER = LogManager.getLogger("pathingtheway");
+@Mod(PathingTheWay.MOD_ID)
+public class PathingTheWay {
+    public static final String MOD_ID = "pathingtheway";
+    public static final Logger LOGGER = LogManager.getLogger(PathingTheWay.MOD_ID);
 
     public PathingTheWay() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();

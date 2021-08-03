@@ -2,20 +2,22 @@ package com.mrbysco.pathingtheway.handler;
 
 import com.mrbysco.pathingtheway.config.ConfigCache;
 import com.mrbysco.pathingtheway.config.PathingConfig;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.state.properties.Half;
-import net.minecraft.state.properties.SlabType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -27,60 +29,58 @@ public class PathHandler {
 	@SubscribeEvent
 	public void onServerStarting(RightClickBlock event) {
 		ItemStack stack = event.getItemStack();
-		BlockRayTraceResult blockRayTraceResult = event.getHitVec();
+		BlockHitResult blockRayTraceResult = event.getHitVec();
 		BlockPos pos = event.getPos();
-		World world = event.getWorld();
+		Level world = event.getWorld();
 		BlockState oldState = world.getBlockState(pos);
 		ResourceLocation blockLocation = world.getBlockState(pos).getBlock().getRegistryName();
 
-		if(blockLocation != null && !stack.isEmpty() && !stack.getToolTypes().isEmpty()) {
-			PlayerEntity player = event.getPlayer();
-			for (ToolType type : stack.getToolTypes()) {
-				String typeName = type.getName();
-				if(isSneaking(type, player) && ConfigCache.toolActionMap.containsKey(typeName)) {
-					Map<ResourceLocation, ResourceLocation> actionMap = ConfigCache.toolActionMap.get(typeName);
-					if(actionMap.containsKey(blockLocation)) {
-						ResourceLocation newLoc = actionMap.get(blockLocation);
-						Block block = ForgeRegistries.BLOCKS.getValue(newLoc);
-						if(block != null) {
-							BlockState newState = block.getDefaultState();
-							Direction direction = event.getFace();
+		//TODO: Expect a new version when Forge PR 7970 gets in
+		if(blockLocation != null && !stack.isEmpty() &&
+				stack.getItem() instanceof DiggerItem toolItem && toolItem.blocks instanceof Tag.Named<Block> mineableTag) {
+			Player player = event.getPlayer();
+			String tagName = mineableTag.getName().getPath();
+			if(isSneaking(mineableTag, player) && ConfigCache.toolActionMap.containsKey(tagName)) {
+				Map<ResourceLocation, ResourceLocation> actionMap = ConfigCache.toolActionMap.get(tagName);
+				if(actionMap.containsKey(blockLocation)) {
+					ResourceLocation newLoc = actionMap.get(blockLocation);
+					Block block = ForgeRegistries.BLOCKS.getValue(newLoc);
+					if(block != null) {
+						BlockState newState = block.defaultBlockState();
+						Direction direction = event.getFace();
 
-							if(oldState.hasProperty(BlockStateProperties.WATERLOGGED) && newState.hasProperty(BlockStateProperties.WATERLOGGED)) {
-								newState.with(BlockStateProperties.WATERLOGGED, oldState.get(BlockStateProperties.WATERLOGGED));
-							}
-							if(newState.hasProperty(BlockStateProperties.SLAB_TYPE) && direction != Direction.DOWN && !(direction == Direction.UP || !(blockRayTraceResult.getHitVec().y - (double)pos.getY() < 0.5D))) {
-								newState = newState.with(BlockStateProperties.SLAB_TYPE, SlabType.TOP);
-							}
-							if(newState.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
-								newState = newState.with(BlockStateProperties.HORIZONTAL_FACING, player.getHorizontalFacing());
-							}
-							if(newState.hasProperty(BlockStateProperties.HALF)) {
-								newState = newState.with(BlockStateProperties.HALF, direction != Direction.DOWN && (direction == Direction.UP || !(blockRayTraceResult.getHitVec().y - (double)pos.getY() < 0.5D)) ? Half.BOTTOM : Half.TOP);
-							}
-							world.setBlockState(pos, newState);
-							if(!player.abilities.isCreativeMode) {
-								stack.damageItem(1, player, (playerEntity) -> playerEntity.sendBreakAnimation(event.getHand()));
-							}
-							world.playSound(player, pos, newState.getSoundType().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
-
-							break;
+						if(oldState.hasProperty(BlockStateProperties.WATERLOGGED) && newState.hasProperty(BlockStateProperties.WATERLOGGED)) {
+							newState.setValue(BlockStateProperties.WATERLOGGED, oldState.getValue(BlockStateProperties.WATERLOGGED));
 						}
+						if(newState.hasProperty(BlockStateProperties.SLAB_TYPE) && direction != Direction.DOWN && !(direction == Direction.UP || !(blockRayTraceResult.getLocation().y - (double)pos.getY() < 0.5D))) {
+							newState = newState.setValue(BlockStateProperties.SLAB_TYPE, SlabType.TOP);
+						}
+						if(newState.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+							newState = newState.setValue(BlockStateProperties.HORIZONTAL_FACING, player.getDirection());
+						}
+						if(newState.hasProperty(BlockStateProperties.HALF)) {
+							newState = newState.setValue(BlockStateProperties.HALF, direction != Direction.DOWN && (direction == Direction.UP || !(blockRayTraceResult.getLocation().y - (double)pos.getY() < 0.5D)) ? Half.BOTTOM : Half.TOP);
+						}
+						world.setBlockAndUpdate(pos, newState);
+						if(!player.getAbilities().instabuild) {
+							stack.hurtAndBreak(1, player, (playerEntity) -> playerEntity.broadcastBreakEvent(event.getHand()));
+						}
+						world.playSound(player, pos, newState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
 					}
 				}
 			}
 		}
 	}
 
-	public boolean isSneaking(ToolType type, PlayerEntity playerEntity) {
-		boolean flag = playerEntity.isSneaking();
-		if(type == ToolType.AXE) {
+	public boolean isSneaking(Tag<Block> mineableTag, Player playerEntity) {
+		boolean flag = playerEntity.isShiftKeyDown();
+		if(mineableTag == BlockTags.MINEABLE_WITH_AXE) {
 			return flag == PathingConfig.COMMON.axeSneaking.get();
-		} else if(type == ToolType.PICKAXE) {
+		} else if(mineableTag == BlockTags.MINEABLE_WITH_PICKAXE) {
 			return flag == PathingConfig.COMMON.pickaxeSneaking.get();
-		} else if(type == ToolType.HOE) {
+		} else if(mineableTag == BlockTags.MINEABLE_WITH_HOE) {
 			return flag == PathingConfig.COMMON.hoeSneaking.get();
-		} else if(type == ToolType.SHOVEL) {
+		} else if(mineableTag == BlockTags.MINEABLE_WITH_SHOVEL) {
 			return flag == PathingConfig.COMMON.shovelSneaking.get();
 		}
 		return true;

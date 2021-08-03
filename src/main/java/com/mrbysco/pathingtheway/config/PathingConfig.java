@@ -1,12 +1,12 @@
 package com.mrbysco.pathingtheway.config;
 
 import com.mrbysco.pathingtheway.PathingTheWay;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collections;
@@ -29,8 +29,8 @@ public class PathingConfig {
 
 			shovelPathing = builder
 					.comment("A list of additional pathing behaviors using shovels [Syntax: \"domain:block,domain:replacement\" ]\n" +
-							"[Example: \"minecraft:podzol,minecraft:grass_path\"]")
-					.defineList("shovelPathing", Collections.singletonList(""), o -> isValidOption(o));
+							"[Example: \"minecraft:podzol,minecraft:dirt_path\"]")
+					.defineListAllowEmpty(Collections.singletonList("shovelPathing"), () -> Collections.singletonList(""), PathingConfig::isValidOption);
 
 			shovelSneaking = builder
 					.comment("Defines if sneaking is required to do custom pathing using shovels")
@@ -39,7 +39,7 @@ public class PathingConfig {
 			pickaxeChiseling = builder
 					.comment("A list of additional chiseling behaviors using pickaxe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:stone,minecraft:stone_stairs\"]")
-					.defineList("pickaxeChiseling", Collections.singletonList(""), o -> isValidOption(o));
+					.defineList(Collections.singletonList("pickaxeChiseling"), () -> Collections.singletonList(""), PathingConfig::isValidOption);
 
 			pickaxeSneaking = builder
 					.comment("Defines if sneaking is required to do custom chiseling using pickaxe's")
@@ -48,7 +48,7 @@ public class PathingConfig {
 			axeStripping = builder
 					.comment("A list of additional stripping behaviors using axe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:stripped_oak_log,minecraft:oak_planks\"]")
-					.defineList("axeStripping", Collections.singletonList(""), o -> isValidOption(o));
+					.defineList(Collections.singletonList("axeStripping"), () -> Collections.singletonList(""), PathingConfig::isValidOption);
 
 			axeSneaking = builder
 					.comment("Defines if sneaking is required to do custom stripping using axe's")
@@ -57,7 +57,7 @@ public class PathingConfig {
 			hoeTilling = builder
 					.comment("A list of additional tilling behaviors using hoe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:podzol,minecraft:farmland\"]")
-					.defineList("hoeTilling", Collections.singletonList(""), o -> isValidOption(o));
+					.defineList(Collections.singletonList("hoeTilling"), () -> Collections.singletonList(""), PathingConfig::isValidOption);
 
 			hoeSneaking = builder
 					.comment("Defines if sneaking is required to do custom tilling using hoe's")
@@ -77,17 +77,12 @@ public class PathingConfig {
 				if(value.contains(",")) {
 					String[] splitValue = value.split(",");
 					if(splitValue.length == 2) {
-						return isResouceNameValid(splitValue[0]) && isResouceNameValid(splitValue[1]);
+						return ResourceLocation.isValidResourceLocation(splitValue[0]) && ResourceLocation.isValidResourceLocation(splitValue[1]);
 					}
 				}
 			}
 		}
 		return false;
-	}
-
-	private static boolean isResouceNameValid(String resourceName) {
-		String[] astring = ResourceLocation.decompose(resourceName, ':');
-		return ResourceLocation.isValidNamespace(org.apache.commons.lang3.StringUtils.isEmpty(astring[0]) ? "minecraft" : astring[0]) && ResourceLocation.isPathValid(astring[1]);
 	}
 
 	public static final ForgeConfigSpec serverSpec;
@@ -100,17 +95,19 @@ public class PathingConfig {
 	}
 
 	@SubscribeEvent
-	public static void onLoad(final ModConfig.Loading configEvent) {
+	public static void onLoad(final ModConfigEvent.Loading configEvent) {
 		PathingTheWay.LOGGER.debug("Loaded Pathing The Way's config file {}", configEvent.getConfig().getFileName());
 	}
 
 	@SubscribeEvent
-	public static void onFileChange(final ModConfig.Reloading configEvent) {
+	public static void onFileChange(final ModConfigEvent.Reloading configEvent) {
 		PathingTheWay.LOGGER.debug("Pathing The Way's config just got changed on the file system!");
 	}
 
 	@SubscribeEvent
-	public static void onReload(final ModConfig.ModConfigEvent configEvent) {
-		ConfigCache.refreshCache();
+	public static void onReload(final ModConfigEvent configEvent) {
+		if(configEvent.getConfig().getModId().equals(PathingTheWay.MOD_ID)) {
+			ConfigCache.refreshCache();
+		}
 	}
 }
