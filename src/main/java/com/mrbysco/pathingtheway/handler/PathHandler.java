@@ -27,7 +27,7 @@ import java.util.Map;
 public class PathHandler {
 
 	@SubscribeEvent
-	public void onServerStarting(RightClickBlock event) {
+	public void onRightClickBlock(RightClickBlock event) {
 		ItemStack stack = event.getItemStack();
 		BlockHitResult blockRayTraceResult = event.getHitVec();
 		BlockPos pos = event.getPos();
