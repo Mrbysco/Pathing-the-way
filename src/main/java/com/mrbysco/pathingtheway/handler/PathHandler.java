@@ -43,24 +43,24 @@ public class PathHandler {
 						ResourceLocation newLoc = actionMap.get(blockLocation);
 						Block block = ForgeRegistries.BLOCKS.getValue(newLoc);
 						if(block != null) {
-							BlockState newState = block.getDefaultState();
+							BlockState newState = block.defaultBlockState();
 							Direction direction = event.getFace();
 
 							if(oldState.hasProperty(BlockStateProperties.WATERLOGGED) && newState.hasProperty(BlockStateProperties.WATERLOGGED)) {
-								newState.with(BlockStateProperties.WATERLOGGED, oldState.get(BlockStateProperties.WATERLOGGED));
+								newState.setValue(BlockStateProperties.WATERLOGGED, oldState.getValue(BlockStateProperties.WATERLOGGED));
 							}
-							if(newState.hasProperty(BlockStateProperties.SLAB_TYPE) && direction != Direction.DOWN && !(direction == Direction.UP || !(blockRayTraceResult.getHitVec().y - (double)pos.getY() < 0.5D))) {
-								newState = newState.with(BlockStateProperties.SLAB_TYPE, SlabType.TOP);
+							if(newState.hasProperty(BlockStateProperties.SLAB_TYPE) && direction != Direction.DOWN && !(direction == Direction.UP || !(blockRayTraceResult.getLocation().y - (double)pos.getY() < 0.5D))) {
+								newState = newState.setValue(BlockStateProperties.SLAB_TYPE, SlabType.TOP);
 							}
 							if(newState.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
-								newState = newState.with(BlockStateProperties.HORIZONTAL_FACING, player.getHorizontalFacing());
+								newState = newState.setValue(BlockStateProperties.HORIZONTAL_FACING, player.getDirection());
 							}
 							if(newState.hasProperty(BlockStateProperties.HALF)) {
-								newState = newState.with(BlockStateProperties.HALF, direction != Direction.DOWN && (direction == Direction.UP || !(blockRayTraceResult.getHitVec().y - (double)pos.getY() < 0.5D)) ? Half.BOTTOM : Half.TOP);
+								newState = newState.setValue(BlockStateProperties.HALF, direction != Direction.DOWN && (direction == Direction.UP || !(blockRayTraceResult.getLocation().y - (double)pos.getY() < 0.5D)) ? Half.BOTTOM : Half.TOP);
 							}
-							world.setBlockState(pos, newState);
-							if(!player.abilities.isCreativeMode) {
-								stack.damageItem(1, player, (playerEntity) -> playerEntity.sendBreakAnimation(event.getHand()));
+							world.setBlockAndUpdate(pos, newState);
+							if(!player.abilities.instabuild) {
+								stack.hurtAndBreak(1, player, (playerEntity) -> playerEntity.broadcastBreakEvent(event.getHand()));
 							}
 							world.playSound(player, pos, newState.getSoundType().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
 
@@ -73,7 +73,7 @@ public class PathHandler {
 	}
 
 	public boolean isSneaking(ToolType type, PlayerEntity playerEntity) {
-		boolean flag = playerEntity.isSneaking();
+		boolean flag = playerEntity.isShiftKeyDown();
 		if(type == ToolType.AXE) {
 			return flag == PathingConfig.COMMON.axeSneaking.get();
 		} else if(type == ToolType.PICKAXE) {

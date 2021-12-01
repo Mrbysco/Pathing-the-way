@@ -16,7 +16,7 @@ public class ConfigCache {
 		generateContainerModifier("hoe", PathingConfig.COMMON.hoeTilling.get());
 	}
 
-	private static void generateContainerModifier(String toolname, List<? extends String> configValues) {
+	private static void generateContainerModifier(String toolName, List<? extends String> configValues) {
 		Map<ResourceLocation, ResourceLocation> actionList = new HashMap<>();
 		if (!configValues.isEmpty()) {
 			for (String configValue : configValues) {
@@ -28,6 +28,6 @@ public class ConfigCache {
 				}
 			}
 		}
-		toolActionMap.put(toolname, actionList);
+		toolActionMap.put(toolName, actionList);
 	}
 }

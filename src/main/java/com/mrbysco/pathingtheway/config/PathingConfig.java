@@ -30,7 +30,7 @@ public class PathingConfig {
 			shovelPathing = builder
 					.comment("A list of additional pathing behaviors using shovels [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:podzol,minecraft:grass_path\"]")
-					.defineList("shovelPathing", Collections.singletonList(""), o -> isValidOption(o));
+					.defineList("shovelPathing", Collections.singletonList(""), PathingConfig::isValidOption);
 
 			shovelSneaking = builder
 					.comment("Defines if sneaking is required to do custom pathing using shovels")
@@ -39,7 +39,7 @@ public class PathingConfig {
 			pickaxeChiseling = builder
 					.comment("A list of additional chiseling behaviors using pickaxe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:stone,minecraft:stone_stairs\"]")
-					.defineList("pickaxeChiseling", Collections.singletonList(""), o -> isValidOption(o));
+					.defineList("pickaxeChiseling", Collections.singletonList(""), PathingConfig::isValidOption);
 
 			pickaxeSneaking = builder
 					.comment("Defines if sneaking is required to do custom chiseling using pickaxe's")
@@ -48,7 +48,7 @@ public class PathingConfig {
 			axeStripping = builder
 					.comment("A list of additional stripping behaviors using axe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:stripped_oak_log,minecraft:oak_planks\"]")
-					.defineList("axeStripping", Collections.singletonList(""), o -> isValidOption(o));
+					.defineList("axeStripping", Collections.singletonList(""), PathingConfig::isValidOption);
 
 			axeSneaking = builder
 					.comment("Defines if sneaking is required to do custom stripping using axe's")
@@ -57,7 +57,7 @@ public class PathingConfig {
 			hoeTilling = builder
 					.comment("A list of additional tilling behaviors using hoe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:podzol,minecraft:farmland\"]")
-					.defineList("hoeTilling", Collections.singletonList(""), o -> isValidOption(o));
+					.defineList("hoeTilling", Collections.singletonList(""), PathingConfig::isValidOption);
 
 			hoeSneaking = builder
 					.comment("Defines if sneaking is required to do custom tilling using hoe's")
@@ -87,7 +87,7 @@ public class PathingConfig {
 
 	private static boolean isResouceNameValid(String resourceName) {
 		String[] astring = ResourceLocation.decompose(resourceName, ':');
-		return ResourceLocation.isValidNamespace(org.apache.commons.lang3.StringUtils.isEmpty(astring[0]) ? "minecraft" : astring[0]) && ResourceLocation.isPathValid(astring[1]);
+		return ResourceLocation.isValidNamespace(org.apache.commons.lang3.StringUtils.isEmpty(astring[0]) ? "minecraft" : astring[0]) && ResourceLocation.isValidPath(astring[1]);
 	}
 
 	public static final ForgeConfigSpec serverSpec;
