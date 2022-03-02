@@ -36,7 +36,7 @@ public class PathHandler {
 		ResourceLocation blockLocation = world.getBlockState(pos).getBlock().getRegistryName();
 
 		//TODO: Expect a new version when Forge PR 7970 gets in
-		if(blockLocation != null && !stack.isEmpty() &&
+		if(blockLocation != null && !stack.isEmpty() && //stack.canPerformAction(ToolActions.SHOVEL_DIG) && TODO: Maybe?
 				stack.getItem() instanceof DiggerItem toolItem && toolItem.blocks instanceof Tag.Named<Block> mineableTag) {
 			Player player = event.getPlayer();
 			String tagName = mineableTag.getName().getPath();

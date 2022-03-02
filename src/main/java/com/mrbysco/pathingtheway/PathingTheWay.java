@@ -13,14 +13,14 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(PathingTheWay.MOD_ID)
 public class PathingTheWay {
-    public static final String MOD_ID = "pathingtheway";
-    public static final Logger LOGGER = LogManager.getLogger(PathingTheWay.MOD_ID);
+	public static final String MOD_ID = "pathingtheway";
+	public static final Logger LOGGER = LogManager.getLogger(PathingTheWay.MOD_ID);
 
-    public PathingTheWay() {
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModLoadingContext.get().registerConfig(Type.COMMON, PathingConfig.serverSpec);
-        eventBus.register(PathingConfig.class);
+	public PathingTheWay() {
+		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		ModLoadingContext.get().registerConfig(Type.COMMON, PathingConfig.serverSpec);
+		eventBus.register(PathingConfig.class);
 
-        MinecraftForge.EVENT_BUS.register(new PathHandler());
-    }
+		MinecraftForge.EVENT_BUS.register(new PathHandler());
+	}
 }
