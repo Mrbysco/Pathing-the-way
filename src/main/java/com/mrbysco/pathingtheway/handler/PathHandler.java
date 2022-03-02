@@ -4,10 +4,11 @@ import com.mrbysco.pathingtheway.config.ConfigCache;
 import com.mrbysco.pathingtheway.config.PathingConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
@@ -36,10 +37,11 @@ public class PathHandler {
 		ResourceLocation blockLocation = world.getBlockState(pos).getBlock().getRegistryName();
 
 		//TODO: Expect a new version when Forge PR 7970 gets in
-		if(blockLocation != null && !stack.isEmpty() && //stack.canPerformAction(ToolActions.SHOVEL_DIG) && TODO: Maybe?
-				stack.getItem() instanceof DiggerItem toolItem && toolItem.blocks instanceof Tag.Named<Block> mineableTag) {
+		if(blockLocation != null && !stack.isEmpty() &&
+				stack.getItem() instanceof DiggerItem toolItem && toolItem.blocks.isFor(Registry.BLOCK_REGISTRY)) {
 			Player player = event.getPlayer();
-			String tagName = mineableTag.getName().getPath();
+			TagKey<Block> mineableTag = toolItem.blocks;
+			String tagName = mineableTag.location().getPath();
 			if(isSneaking(mineableTag, player) && ConfigCache.toolActionMap.containsKey(tagName)) {
 				Map<ResourceLocation, ResourceLocation> actionMap = ConfigCache.toolActionMap.get(tagName);
 				if(actionMap.containsKey(blockLocation)) {
@@ -72,7 +74,7 @@ public class PathHandler {
 		}
 	}
 
-	public boolean isSneaking(Tag<Block> mineableTag, Player playerEntity) {
+	public boolean isSneaking(TagKey<Block> mineableTag, Player playerEntity) {
 		boolean flag = playerEntity.isShiftKeyDown();
 		if(mineableTag == BlockTags.MINEABLE_WITH_AXE) {
 			return flag == PathingConfig.COMMON.axeSneaking.get();
