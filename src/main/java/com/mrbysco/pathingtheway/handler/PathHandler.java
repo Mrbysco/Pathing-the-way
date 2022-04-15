@@ -30,44 +30,45 @@ public class PathHandler {
 	@SubscribeEvent
 	public void onRightClickBlock(RightClickBlock event) {
 		ItemStack stack = event.getItemStack();
-		BlockHitResult blockRayTraceResult = event.getHitVec();
+		BlockHitResult blockHitResult = event.getHitVec();
 		BlockPos pos = event.getPos();
-		Level world = event.getWorld();
-		BlockState oldState = world.getBlockState(pos);
-		ResourceLocation blockLocation = world.getBlockState(pos).getBlock().getRegistryName();
+		Level level = event.getWorld();
+		BlockState oldState = level.getBlockState(pos);
+		ResourceLocation blockLocation = level.getBlockState(pos).getBlock().getRegistryName();
 
-		//TODO: Expect a new version when Forge PR 7970 gets in
-		if(blockLocation != null && !stack.isEmpty() &&
-				stack.getItem() instanceof DiggerItem toolItem && toolItem.blocks.isFor(Registry.BLOCK_REGISTRY)) {
+		if (blockLocation != null && !stack.isEmpty() && stack.getItem() instanceof DiggerItem toolItem && toolItem.blocks.isFor(Registry.BLOCK_REGISTRY)) {
 			Player player = event.getPlayer();
 			TagKey<Block> mineableTag = toolItem.blocks;
 			String tagName = mineableTag.location().getPath();
-			if(isSneaking(mineableTag, player) && ConfigCache.toolActionMap.containsKey(tagName)) {
+			if (isSneaking(mineableTag, player) && ConfigCache.toolActionMap.containsKey(tagName)) {
 				Map<ResourceLocation, ResourceLocation> actionMap = ConfigCache.toolActionMap.get(tagName);
-				if(actionMap.containsKey(blockLocation)) {
+				if (actionMap.containsKey(blockLocation)) {
 					ResourceLocation newLoc = actionMap.get(blockLocation);
 					Block block = ForgeRegistries.BLOCKS.getValue(newLoc);
-					if(block != null) {
+					if (block != null) {
 						BlockState newState = block.defaultBlockState();
 						Direction direction = event.getFace();
 
-						if(oldState.hasProperty(BlockStateProperties.WATERLOGGED) && newState.hasProperty(BlockStateProperties.WATERLOGGED)) {
+						if (oldState.hasProperty(BlockStateProperties.WATERLOGGED) && newState.hasProperty(BlockStateProperties.WATERLOGGED)) {
 							newState.setValue(BlockStateProperties.WATERLOGGED, oldState.getValue(BlockStateProperties.WATERLOGGED));
 						}
-						if(newState.hasProperty(BlockStateProperties.SLAB_TYPE) && direction != Direction.DOWN && !(direction == Direction.UP || !(blockRayTraceResult.getLocation().y - (double)pos.getY() < 0.5D))) {
+						if (newState.hasProperty(BlockStateProperties.SLAB_TYPE) && direction != Direction.DOWN && !(direction == Direction.UP ||
+								!(blockHitResult.getLocation().y - (double) pos.getY() < 0.5D))) {
 							newState = newState.setValue(BlockStateProperties.SLAB_TYPE, SlabType.TOP);
 						}
-						if(newState.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+						if (newState.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
 							newState = newState.setValue(BlockStateProperties.HORIZONTAL_FACING, player.getDirection());
 						}
-						if(newState.hasProperty(BlockStateProperties.HALF)) {
-							newState = newState.setValue(BlockStateProperties.HALF, direction != Direction.DOWN && (direction == Direction.UP || !(blockRayTraceResult.getLocation().y - (double)pos.getY() < 0.5D)) ? Half.BOTTOM : Half.TOP);
+						if (newState.hasProperty(BlockStateProperties.HALF)) {
+							newState = newState.setValue(BlockStateProperties.HALF, direction != Direction.DOWN && (direction == Direction.UP ||
+									!(blockHitResult.getLocation().y - (double) pos.getY() < 0.5D)) ? Half.BOTTOM : Half.TOP);
 						}
-						world.setBlockAndUpdate(pos, newState);
-						if(!player.getAbilities().instabuild) {
+						level.setBlockAndUpdate(pos, newState);
+						if (!player.getAbilities().instabuild) {
 							stack.hurtAndBreak(1, player, (playerEntity) -> playerEntity.broadcastBreakEvent(event.getHand()));
 						}
-						world.playSound(player, pos, newState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
+						level.playSound(player, pos, newState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
+						event.setCanceled(true);
 					}
 				}
 			}
@@ -76,13 +77,13 @@ public class PathHandler {
 
 	public boolean isSneaking(TagKey<Block> mineableTag, Player playerEntity) {
 		boolean flag = playerEntity.isShiftKeyDown();
-		if(mineableTag == BlockTags.MINEABLE_WITH_AXE) {
+		if (mineableTag == BlockTags.MINEABLE_WITH_AXE) {
 			return flag == PathingConfig.COMMON.axeSneaking.get();
-		} else if(mineableTag == BlockTags.MINEABLE_WITH_PICKAXE) {
+		} else if (mineableTag == BlockTags.MINEABLE_WITH_PICKAXE) {
 			return flag == PathingConfig.COMMON.pickaxeSneaking.get();
-		} else if(mineableTag == BlockTags.MINEABLE_WITH_HOE) {
+		} else if (mineableTag == BlockTags.MINEABLE_WITH_HOE) {
 			return flag == PathingConfig.COMMON.hoeSneaking.get();
-		} else if(mineableTag == BlockTags.MINEABLE_WITH_SHOVEL) {
+		} else if (mineableTag == BlockTags.MINEABLE_WITH_SHOVEL) {
 			return flag == PathingConfig.COMMON.shovelSneaking.get();
 		}
 		return true;

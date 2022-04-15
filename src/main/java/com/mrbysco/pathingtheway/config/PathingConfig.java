@@ -7,9 +7,9 @@ import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Collections;
 import java.util.List;
 
 public class PathingConfig {
@@ -30,7 +30,7 @@ public class PathingConfig {
 			shovelPathing = builder
 					.comment("A list of additional pathing behaviors using shovels [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:podzol,minecraft:dirt_path\"]")
-					.defineListAllowEmpty(Collections.singletonList("shovelPathing"), () -> Collections.singletonList(""), PathingConfig::isValidOption);
+					.defineListAllowEmpty(List.of("shovelPathing"), () -> Lists.newArrayList(), PathingConfig::isValidOption);
 
 			shovelSneaking = builder
 					.comment("Defines if sneaking is required to do custom pathing using shovels")
@@ -39,7 +39,7 @@ public class PathingConfig {
 			pickaxeChiseling = builder
 					.comment("A list of additional chiseling behaviors using pickaxe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:stone,minecraft:stone_stairs\"]")
-					.defineList(Collections.singletonList("pickaxeChiseling"), () -> Collections.singletonList(""), PathingConfig::isValidOption);
+					.defineListAllowEmpty(List.of("pickaxeChiseling"), () -> Lists.newArrayList(), PathingConfig::isValidOption);
 
 			pickaxeSneaking = builder
 					.comment("Defines if sneaking is required to do custom chiseling using pickaxe's")
@@ -48,7 +48,7 @@ public class PathingConfig {
 			axeStripping = builder
 					.comment("A list of additional stripping behaviors using axe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:stripped_oak_log,minecraft:oak_planks\"]")
-					.defineList(Collections.singletonList("axeStripping"), () -> Collections.singletonList(""), PathingConfig::isValidOption);
+					.defineListAllowEmpty(List.of("axeStripping"), () -> Lists.newArrayList(), PathingConfig::isValidOption);
 
 			axeSneaking = builder
 					.comment("Defines if sneaking is required to do custom stripping using axe's")
@@ -57,7 +57,7 @@ public class PathingConfig {
 			hoeTilling = builder
 					.comment("A list of additional tilling behaviors using hoe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:podzol,minecraft:farmland\"]")
-					.defineList(Collections.singletonList("hoeTilling"), () -> Collections.singletonList(""), PathingConfig::isValidOption);
+					.defineListAllowEmpty(List.of("hoeTilling"), () -> Lists.newArrayList(), PathingConfig::isValidOption);
 
 			hoeSneaking = builder
 					.comment("Defines if sneaking is required to do custom tilling using hoe's")
@@ -69,14 +69,14 @@ public class PathingConfig {
 
 	public static boolean isValidOption(Object object) {
 		boolean flag = object instanceof String;
-		if(flag) {
+		if (flag) {
 			String value = (String) object;
-			if(value.isEmpty()) {
+			if (value.isEmpty()) {
 				return true;
 			} else {
-				if(value.contains(",")) {
+				if (value.contains(",")) {
 					String[] splitValue = value.split(",");
-					if(splitValue.length == 2) {
+					if (splitValue.length == 2) {
 						return ResourceLocation.isValidResourceLocation(splitValue[0]) && ResourceLocation.isValidResourceLocation(splitValue[1]);
 					}
 				}
@@ -106,7 +106,7 @@ public class PathingConfig {
 
 	@SubscribeEvent
 	public static void onReload(final ModConfigEvent configEvent) {
-		if(configEvent.getConfig().getModId().equals(PathingTheWay.MOD_ID)) {
+		if (configEvent.getConfig().getModId().equals(PathingTheWay.MOD_ID)) {
 			ConfigCache.refreshCache();
 		}
 	}

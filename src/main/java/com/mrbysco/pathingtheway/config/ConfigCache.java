@@ -22,7 +22,7 @@ public class ConfigCache {
 			for (String configValue : configValues) {
 				if (configValue.contains(",")) {
 					String[] splitValue = configValue.split(",");
-					if(splitValue.length == 2) {
+					if (splitValue.length == 2) {
 						actionList.put(new ResourceLocation(splitValue[0]), new ResourceLocation(splitValue[1]));
 					}
 				}
