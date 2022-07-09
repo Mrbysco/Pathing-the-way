@@ -34,7 +34,7 @@ public class PathHandler {
 		BlockPos pos = event.getPos();
 		Level level = event.getWorld();
 		BlockState oldState = level.getBlockState(pos);
-		ResourceLocation blockLocation = level.getBlockState(pos).getBlock().getRegistryName();
+		ResourceLocation blockLocation = ForgeRegistries.BLOCKS.getKey(level.getBlockState(pos).getBlock());
 
 		if (blockLocation != null && !stack.isEmpty() && stack.getItem() instanceof DiggerItem toolItem && toolItem.blocks.isFor(Registry.BLOCK_REGISTRY)) {
 			Player player = event.getPlayer();
