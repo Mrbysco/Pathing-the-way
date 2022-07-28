@@ -29,15 +29,15 @@ public class PathHandler {
 
 	@SubscribeEvent
 	public void onRightClickBlock(RightClickBlock event) {
-		ItemStack stack = event.getItemStack();
-		BlockHitResult blockHitResult = event.getHitVec();
-		BlockPos pos = event.getPos();
-		Level level = event.getWorld();
+		final ItemStack stack = event.getItemStack();
+		final BlockHitResult blockHitResult = event.getHitVec();
+		final BlockPos pos = event.getPos();
+		final Level level = event.getLevel();
 		BlockState oldState = level.getBlockState(pos);
 		ResourceLocation blockLocation = ForgeRegistries.BLOCKS.getKey(level.getBlockState(pos).getBlock());
 
 		if (blockLocation != null && !stack.isEmpty() && stack.getItem() instanceof DiggerItem toolItem && toolItem.blocks.isFor(Registry.BLOCK_REGISTRY)) {
-			Player player = event.getPlayer();
+			final Player player = event.getEntity();
 			TagKey<Block> mineableTag = toolItem.blocks;
 			String tagName = mineableTag.location().getPath();
 			if (isSneaking(mineableTag, player) && ConfigCache.toolActionMap.containsKey(tagName)) {
@@ -47,7 +47,7 @@ public class PathHandler {
 					Block block = ForgeRegistries.BLOCKS.getValue(newLoc);
 					if (block != null) {
 						BlockState newState = block.defaultBlockState();
-						Direction direction = event.getFace();
+						final Direction direction = event.getFace();
 
 						if (oldState.hasProperty(BlockStateProperties.WATERLOGGED) && newState.hasProperty(BlockStateProperties.WATERLOGGED)) {
 							newState.setValue(BlockStateProperties.WATERLOGGED, oldState.getValue(BlockStateProperties.WATERLOGGED));
