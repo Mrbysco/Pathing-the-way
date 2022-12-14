@@ -30,7 +30,7 @@ public class PathingConfig {
 			shovelPathing = builder
 					.comment("A list of additional pathing behaviors using shovels [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:podzol,minecraft:dirt_path\"]")
-					.defineListAllowEmpty(List.of("shovelPathing"), () -> Lists.newArrayList(), PathingConfig::isValidOption);
+					.defineListAllowEmpty(List.of("shovelPathing"), Lists::newArrayList, PathingConfig::isValidOption);
 
 			shovelSneaking = builder
 					.comment("Defines if sneaking is required to do custom pathing using shovels")
@@ -39,7 +39,7 @@ public class PathingConfig {
 			pickaxeChiseling = builder
 					.comment("A list of additional chiseling behaviors using pickaxe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:stone,minecraft:stone_stairs\"]")
-					.defineListAllowEmpty(List.of("pickaxeChiseling"), () -> Lists.newArrayList(), PathingConfig::isValidOption);
+					.defineListAllowEmpty(List.of("pickaxeChiseling"), Lists::newArrayList, PathingConfig::isValidOption);
 
 			pickaxeSneaking = builder
 					.comment("Defines if sneaking is required to do custom chiseling using pickaxe's")
@@ -48,7 +48,7 @@ public class PathingConfig {
 			axeStripping = builder
 					.comment("A list of additional stripping behaviors using axe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:stripped_oak_log,minecraft:oak_planks\"]")
-					.defineListAllowEmpty(List.of("axeStripping"), () -> Lists.newArrayList(), PathingConfig::isValidOption);
+					.defineListAllowEmpty(List.of("axeStripping"), Lists::newArrayList, PathingConfig::isValidOption);
 
 			axeSneaking = builder
 					.comment("Defines if sneaking is required to do custom stripping using axe's")
@@ -57,7 +57,7 @@ public class PathingConfig {
 			hoeTilling = builder
 					.comment("A list of additional tilling behaviors using hoe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:podzol,minecraft:farmland\"]")
-					.defineListAllowEmpty(List.of("hoeTilling"), () -> Lists.newArrayList(), PathingConfig::isValidOption);
+					.defineListAllowEmpty(List.of("hoeTilling"), Lists::newArrayList, PathingConfig::isValidOption);
 
 			hoeSneaking = builder
 					.comment("Defines if sneaking is required to do custom tilling using hoe's")

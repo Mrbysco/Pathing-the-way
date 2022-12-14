@@ -5,6 +5,7 @@ import com.mrbysco.pathingtheway.config.PathingConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -36,7 +37,7 @@ public class PathHandler {
 		BlockState oldState = level.getBlockState(pos);
 		ResourceLocation blockLocation = ForgeRegistries.BLOCKS.getKey(level.getBlockState(pos).getBlock());
 
-		if (blockLocation != null && !stack.isEmpty() && stack.getItem() instanceof DiggerItem toolItem && toolItem.blocks.isFor(Registry.BLOCK_REGISTRY)) {
+		if (blockLocation != null && !stack.isEmpty() && stack.getItem() instanceof DiggerItem toolItem && toolItem.blocks.isFor(Registries.BLOCK)) {
 			final Player player = event.getEntity();
 			TagKey<Block> mineableTag = toolItem.blocks;
 			String tagName = mineableTag.location().getPath();
