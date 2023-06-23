@@ -4,7 +4,6 @@ import com.mrbysco.pathingtheway.config.ConfigCache;
 import com.mrbysco.pathingtheway.config.PathingConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
