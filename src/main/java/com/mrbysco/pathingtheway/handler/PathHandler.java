@@ -4,6 +4,7 @@ import com.mrbysco.pathingtheway.config.ConfigCache;
 import com.mrbysco.pathingtheway.config.PathingConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
@@ -19,9 +20,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public class PathHandler {
 		final BlockPos pos = event.getPos();
 		final Level level = event.getLevel();
 		BlockState oldState = level.getBlockState(pos);
-		ResourceLocation blockLocation = ForgeRegistries.BLOCKS.getKey(level.getBlockState(pos).getBlock());
+		ResourceLocation blockLocation = BuiltInRegistries.BLOCK.getKey(level.getBlockState(pos).getBlock());
 
 		if (blockLocation != null && !stack.isEmpty() && stack.getItem() instanceof DiggerItem toolItem && toolItem.blocks.isFor(Registries.BLOCK)) {
 			final Player player = event.getEntity();
@@ -44,7 +44,7 @@ public class PathHandler {
 				Map<ResourceLocation, ResourceLocation> actionMap = ConfigCache.toolActionMap.get(tagName);
 				if (actionMap.containsKey(blockLocation)) {
 					ResourceLocation newLoc = actionMap.get(blockLocation);
-					Block block = ForgeRegistries.BLOCKS.getValue(newLoc);
+					Block block = BuiltInRegistries.BLOCK.get(newLoc);
 					if (block != null) {
 						BlockState newState = block.defaultBlockState();
 						final Direction direction = event.getFace();
