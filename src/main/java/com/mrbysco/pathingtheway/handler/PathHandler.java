@@ -4,14 +4,12 @@ import com.mrbysco.pathingtheway.config.ConfigCache;
 import com.mrbysco.pathingtheway.config.PathingConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -21,6 +19,8 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.ToolAction;
+import net.neoforged.neoforge.common.ToolActions;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 
 import java.util.Map;
@@ -36,12 +36,11 @@ public class PathHandler {
 		BlockState oldState = level.getBlockState(pos);
 		ResourceLocation blockLocation = BuiltInRegistries.BLOCK.getKey(level.getBlockState(pos).getBlock());
 
-		if (blockLocation != null && !stack.isEmpty() && stack.getItem() instanceof DiggerItem toolItem && toolItem.blocks.isFor(Registries.BLOCK)) {
+		if (blockLocation != null && !stack.isEmpty() && stack.has(DataComponents.TOOL)) {
 			final Player player = event.getEntity();
-			TagKey<Block> mineableTag = toolItem.blocks;
-			String tagName = mineableTag.location().getPath();
-			if (isSneaking(mineableTag, player) && ConfigCache.toolActionMap.containsKey(tagName)) {
-				Map<ResourceLocation, ResourceLocation> actionMap = ConfigCache.toolActionMap.get(tagName);
+			ToolAction action = getToolType(stack);
+			if (isSneaking(action, player)) {
+				Map<ResourceLocation, ResourceLocation> actionMap = ConfigCache.toolActionMap.get(action);
 				if (actionMap.containsKey(blockLocation)) {
 					ResourceLocation newLoc = actionMap.get(blockLocation);
 					Block block = BuiltInRegistries.BLOCK.get(newLoc);
@@ -65,7 +64,7 @@ public class PathHandler {
 						}
 						level.setBlockAndUpdate(pos, newState);
 						if (!player.getAbilities().instabuild) {
-							stack.hurtAndBreak(1, player, (playerEntity) -> playerEntity.broadcastBreakEvent(event.getHand()));
+							stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(event.getHand()));
 						}
 						level.playSound(player, pos, newState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
 						event.setCanceled(true);
@@ -75,17 +74,31 @@ public class PathHandler {
 		}
 	}
 
-	public boolean isSneaking(TagKey<Block> mineableTag, Player playerEntity) {
+	public boolean isSneaking(ToolAction action, Player playerEntity) {
+		if (action == null) return false;
 		boolean flag = playerEntity.isShiftKeyDown();
-		if (mineableTag == BlockTags.MINEABLE_WITH_AXE) {
+		if (action == ToolActions.AXE_DIG) {
 			return flag == PathingConfig.COMMON.axeSneaking.get();
-		} else if (mineableTag == BlockTags.MINEABLE_WITH_PICKAXE) {
+		} else if (action == ToolActions.PICKAXE_DIG) {
 			return flag == PathingConfig.COMMON.pickaxeSneaking.get();
-		} else if (mineableTag == BlockTags.MINEABLE_WITH_HOE) {
+		} else if (action == ToolActions.HOE_DIG) {
 			return flag == PathingConfig.COMMON.hoeSneaking.get();
-		} else if (mineableTag == BlockTags.MINEABLE_WITH_SHOVEL) {
+		} else if (action == ToolActions.SHOVEL_DIG) {
 			return flag == PathingConfig.COMMON.shovelSneaking.get();
 		}
 		return true;
+	}
+
+	public ToolAction getToolType(ItemStack stack) {
+		if (stack.canPerformAction(ToolActions.AXE_DIG)) {
+			return ToolActions.AXE_DIG;
+		} else if (stack.canPerformAction(ToolActions.PICKAXE_DIG)) {
+			return ToolActions.PICKAXE_DIG;
+		} else if (stack.canPerformAction(ToolActions.HOE_DIG)) {
+			return ToolActions.HOE_DIG;
+		} else if (stack.canPerformAction(ToolActions.SHOVEL_DIG)) {
+			return ToolActions.SHOVEL_DIG;
+		}
+		return null;
 	}
 }
