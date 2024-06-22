@@ -3,7 +3,6 @@ package com.mrbysco.pathingtheway;
 import com.mojang.logging.LogUtils;
 import com.mrbysco.pathingtheway.config.PathingConfig;
 import com.mrbysco.pathingtheway.handler.PathHandler;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -16,7 +15,7 @@ public class PathingTheWay {
 	public static final String MOD_ID = "pathingtheway";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public PathingTheWay(IEventBus eventBus, Dist dist, ModContainer container) {
+	public PathingTheWay(IEventBus eventBus, ModContainer container) {
 		container.registerConfig(ModConfig.Type.COMMON, PathingConfig.serverSpec);
 		eventBus.register(PathingConfig.class);
 

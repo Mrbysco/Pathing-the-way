@@ -77,7 +77,8 @@ public class PathingConfig {
 				if (value.contains(",")) {
 					String[] splitValue = value.split(",");
 					if (splitValue.length == 2) {
-						return ResourceLocation.isValidResourceLocation(splitValue[0]) && ResourceLocation.isValidResourceLocation(splitValue[1]);
+						return ResourceLocation.tryParse(splitValue[0]) != null &&
+								ResourceLocation.tryParse(splitValue[1]) != null;
 					}
 				}
 			}
