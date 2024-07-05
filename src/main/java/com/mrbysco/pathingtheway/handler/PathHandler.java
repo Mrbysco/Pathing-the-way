@@ -19,8 +19,8 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.common.ToolAction;
-import net.neoforged.neoforge.common.ToolActions;
+import net.neoforged.neoforge.common.ItemAbilities;
+import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 
 import java.util.Map;
@@ -38,7 +38,7 @@ public class PathHandler {
 
 		if (blockLocation != null && !stack.isEmpty() && stack.has(DataComponents.TOOL)) {
 			final Player player = event.getEntity();
-			ToolAction action = getToolType(stack);
+			ItemAbility action = getToolType(stack);
 			if (isSneaking(action, player)) {
 				Map<ResourceLocation, ResourceLocation> actionMap = ConfigCache.toolActionMap.get(action);
 				if (actionMap.containsKey(blockLocation)) {
@@ -74,30 +74,30 @@ public class PathHandler {
 		}
 	}
 
-	public boolean isSneaking(ToolAction action, Player playerEntity) {
-		if (action == null) return false;
+	public boolean isSneaking(ItemAbility ability, Player playerEntity) {
+		if (ability == null) return false;
 		boolean flag = playerEntity.isShiftKeyDown();
-		if (action == ToolActions.AXE_DIG) {
+		if (ability == ItemAbilities.AXE_DIG) {
 			return flag == PathingConfig.COMMON.axeSneaking.get();
-		} else if (action == ToolActions.PICKAXE_DIG) {
+		} else if (ability == ItemAbilities.PICKAXE_DIG) {
 			return flag == PathingConfig.COMMON.pickaxeSneaking.get();
-		} else if (action == ToolActions.HOE_DIG) {
+		} else if (ability == ItemAbilities.HOE_DIG) {
 			return flag == PathingConfig.COMMON.hoeSneaking.get();
-		} else if (action == ToolActions.SHOVEL_DIG) {
+		} else if (ability == ItemAbilities.SHOVEL_DIG) {
 			return flag == PathingConfig.COMMON.shovelSneaking.get();
 		}
 		return true;
 	}
 
-	public ToolAction getToolType(ItemStack stack) {
-		if (stack.canPerformAction(ToolActions.AXE_DIG)) {
-			return ToolActions.AXE_DIG;
-		} else if (stack.canPerformAction(ToolActions.PICKAXE_DIG)) {
-			return ToolActions.PICKAXE_DIG;
-		} else if (stack.canPerformAction(ToolActions.HOE_DIG)) {
-			return ToolActions.HOE_DIG;
-		} else if (stack.canPerformAction(ToolActions.SHOVEL_DIG)) {
-			return ToolActions.SHOVEL_DIG;
+	public ItemAbility getToolType(ItemStack stack) {
+		if (stack.canPerformAction(ItemAbilities.AXE_DIG)) {
+			return ItemAbilities.AXE_DIG;
+		} else if (stack.canPerformAction(ItemAbilities.PICKAXE_DIG)) {
+			return ItemAbilities.PICKAXE_DIG;
+		} else if (stack.canPerformAction(ItemAbilities.HOE_DIG)) {
+			return ItemAbilities.HOE_DIG;
+		} else if (stack.canPerformAction(ItemAbilities.SHOVEL_DIG)) {
+			return ItemAbilities.SHOVEL_DIG;
 		}
 		return null;
 	}
