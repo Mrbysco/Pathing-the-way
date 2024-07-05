@@ -1,1 +1,1 @@
-* Initial update to 1.21
+* Update NeoForge support (The mod now requires at least **21.0.40-beta** and above)
