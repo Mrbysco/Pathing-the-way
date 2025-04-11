@@ -2,12 +2,11 @@ package com.mrbysco.pathingtheway.config;
 
 import com.mrbysco.pathingtheway.PathingTheWay;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
 import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.event.config.ModConfigEvent;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
@@ -30,7 +29,7 @@ public class PathingConfig {
 			shovelPathing = builder
 					.comment("A list of additional pathing behaviors using shovels [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:podzol,minecraft:dirt_path\"]")
-					.defineListAllowEmpty(List.of("shovelPathing"), Lists::newArrayList, PathingConfig::isValidOption);
+					.defineListAllowEmpty("shovelPathing", List::of, String::new, PathingConfig::isValidOption);
 
 			shovelSneaking = builder
 					.comment("Defines if sneaking is required to do custom pathing using shovels")
@@ -39,7 +38,7 @@ public class PathingConfig {
 			pickaxeChiseling = builder
 					.comment("A list of additional chiseling behaviors using pickaxe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:stone,minecraft:stone_stairs\"]")
-					.defineListAllowEmpty(List.of("pickaxeChiseling"), Lists::newArrayList, PathingConfig::isValidOption);
+					.defineListAllowEmpty("pickaxeChiseling", List::of, String::new, PathingConfig::isValidOption);
 
 			pickaxeSneaking = builder
 					.comment("Defines if sneaking is required to do custom chiseling using pickaxe's")
@@ -48,7 +47,7 @@ public class PathingConfig {
 			axeStripping = builder
 					.comment("A list of additional stripping behaviors using axe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:stripped_oak_log,minecraft:oak_planks\"]")
-					.defineListAllowEmpty(List.of("axeStripping"), Lists::newArrayList, PathingConfig::isValidOption);
+					.defineListAllowEmpty("axeStripping", List::of, String::new, PathingConfig::isValidOption);
 
 			axeSneaking = builder
 					.comment("Defines if sneaking is required to do custom stripping using axe's")
@@ -57,7 +56,7 @@ public class PathingConfig {
 			hoeTilling = builder
 					.comment("A list of additional tilling behaviors using hoe's [Syntax: \"domain:block,domain:replacement\" ]\n" +
 							"[Example: \"minecraft:podzol,minecraft:farmland\"]")
-					.defineListAllowEmpty(List.of("hoeTilling"), Lists::newArrayList, PathingConfig::isValidOption);
+					.defineListAllowEmpty("hoeTilling", List::of, String::new, PathingConfig::isValidOption);
 
 			hoeSneaking = builder
 					.comment("Defines if sneaking is required to do custom tilling using hoe's")
@@ -86,12 +85,12 @@ public class PathingConfig {
 		return false;
 	}
 
-	public static final ModConfigSpec serverSpec;
+	public static final ModConfigSpec commonSpec;
 	public static final Common COMMON;
 
 	static {
 		final Pair<Common, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Common::new);
-		serverSpec = specPair.getRight();
+		commonSpec = specPair.getRight();
 		COMMON = specPair.getLeft();
 	}
 

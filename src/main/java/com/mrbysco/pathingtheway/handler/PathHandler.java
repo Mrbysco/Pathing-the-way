@@ -27,6 +27,7 @@ import java.util.Map;
 
 public class PathHandler {
 
+	@SuppressWarnings("deprecation")
 	@SubscribeEvent
 	public void onRightClickBlock(RightClickBlock event) {
 		final ItemStack stack = event.getItemStack();

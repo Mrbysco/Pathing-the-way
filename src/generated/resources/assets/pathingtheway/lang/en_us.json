@@ -1,0 +1,20 @@
+{
+  "pathingtheway.configuration.axeSneaking": "Axe Sneaking",
+  "pathingtheway.configuration.axeSneaking.tooltip": "Defines if sneaking is required to do custom stripping using axe's",
+  "pathingtheway.configuration.axeStripping": "Axe Stripping",
+  "pathingtheway.configuration.axeStripping.tooltip": "A list of additional stripping behaviors using axe's [Syntax: \"domain:block,domain:replacement\" ]\n[Example: \"minecraft:stripped_oak_log,minecraft:oak_planks\"]",
+  "pathingtheway.configuration.common": "Common",
+  "pathingtheway.configuration.common.tooltip": "Common settings",
+  "pathingtheway.configuration.hoeSneaking": "Hoe Sneaking",
+  "pathingtheway.configuration.hoeSneaking.tooltip": "Defines if sneaking is required to do custom tilling using hoe's",
+  "pathingtheway.configuration.hoeTilling": "Hoe Tilling",
+  "pathingtheway.configuration.hoeTilling.tooltip": "A list of additional tilling behaviors using hoe's [Syntax: \"domain:block,domain:replacement\" ]\n[Example: \"minecraft:podzol,minecraft:farmland\"]",
+  "pathingtheway.configuration.pickaxeChiseling": "Pickaxe Chiseling",
+  "pathingtheway.configuration.pickaxeChiseling.tooltip": "A list of additional chiseling behaviors using pickaxe's [Syntax: \"domain:block,domain:replacement\" ]\n[Example: \"minecraft:stone,minecraft:stone_stairs\"]",
+  "pathingtheway.configuration.pickaxeSneaking": "Pickaxe Sneaking",
+  "pathingtheway.configuration.pickaxeSneaking.tooltip": "Defines if sneaking is required to do custom chiseling using pickaxe's",
+  "pathingtheway.configuration.shovelPathing": "Shovel Pathing",
+  "pathingtheway.configuration.shovelPathing.tooltip": "A list of additional pathing behaviors using shovels [Syntax: \"domain:block,domain:replacement\" ]\n[Example: \"minecraft:podzol,minecraft:dirt_path\"]",
+  "pathingtheway.configuration.shovelSneaking": "Shovel Sneaking",
+  "pathingtheway.configuration.shovelSneaking.tooltip": "Defines if sneaking is required to do custom pathing using shovels"
+}
