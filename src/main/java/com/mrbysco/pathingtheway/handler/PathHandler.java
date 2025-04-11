@@ -44,7 +44,7 @@ public class PathHandler {
 				Map<ResourceLocation, ResourceLocation> actionMap = ConfigCache.toolActionMap.get(action);
 				if (actionMap.containsKey(blockLocation)) {
 					ResourceLocation newLoc = actionMap.get(blockLocation);
-					Block block = BuiltInRegistries.BLOCK.get(newLoc);
+					Block block = BuiltInRegistries.BLOCK.getValue(newLoc);
 					if (block != null) {
 						BlockState newState = block.defaultBlockState();
 						final Direction direction = event.getFace();

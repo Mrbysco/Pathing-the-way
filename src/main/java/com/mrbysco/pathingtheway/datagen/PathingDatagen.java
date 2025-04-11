@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class PathingDatagen {
 	@SubscribeEvent
-	public static void gatherData(GatherDataEvent event) {
+	public static void gatherData(GatherDataEvent.Client event) {
 		DataGenerator generator = event.getGenerator();
 		PackOutput packOutput = generator.getPackOutput();
 
