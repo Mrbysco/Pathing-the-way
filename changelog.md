@@ -1,1 +1,1 @@
-* Update NeoForge support (The mod now requires at least **21.0.40-beta** and above)
+* Enable in-game config
