@@ -9,7 +9,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -64,7 +63,7 @@ public class PathHandler {
 						}
 						level.setBlockAndUpdate(pos, newState);
 						if (!player.getAbilities().instabuild) {
-							stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(event.getHand()));
+							stack.hurtAndBreak(1, player, event.getHand().asEquipmentSlot());
 						}
 						level.playSound(player, pos, newState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
 						event.setCanceled(true);
