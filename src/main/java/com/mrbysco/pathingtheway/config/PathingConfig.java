@@ -1,7 +1,7 @@
 package com.mrbysco.pathingtheway.config;
 
 import com.mrbysco.pathingtheway.PathingTheWay;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -76,8 +76,8 @@ public class PathingConfig {
 				if (value.contains(",")) {
 					String[] splitValue = value.split(",");
 					if (splitValue.length == 2) {
-						return ResourceLocation.tryParse(splitValue[0]) != null &&
-								ResourceLocation.tryParse(splitValue[1]) != null;
+						return Identifier.tryParse(splitValue[0]) != null &&
+								Identifier.tryParse(splitValue[1]) != null;
 					}
 				}
 			}

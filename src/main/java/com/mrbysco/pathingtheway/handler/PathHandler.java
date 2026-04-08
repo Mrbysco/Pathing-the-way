@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.player.Player;
@@ -33,15 +33,15 @@ public class PathHandler {
 		final BlockPos pos = event.getPos();
 		final Level level = event.getLevel();
 		BlockState oldState = level.getBlockState(pos);
-		ResourceLocation blockLocation = BuiltInRegistries.BLOCK.getKey(level.getBlockState(pos).getBlock());
+		Identifier blockLocation = BuiltInRegistries.BLOCK.getKey(level.getBlockState(pos).getBlock());
 
 		if (blockLocation != null && !stack.isEmpty() && stack.has(DataComponents.TOOL)) {
 			final Player player = event.getEntity();
 			ToolType action = getToolType(stack);
 			if (isSneaking(action, player)) {
-				Map<ResourceLocation, ResourceLocation> actionMap = ConfigCache.toolActionMap.get(action);
+				Map<Identifier, Identifier> actionMap = ConfigCache.toolActionMap.get(action);
 				if (actionMap.containsKey(blockLocation)) {
-					ResourceLocation newLoc = actionMap.get(blockLocation);
+					Identifier newLoc = actionMap.get(blockLocation);
 					Block block = BuiltInRegistries.BLOCK.getValue(newLoc);
 					if (block != null) {
 						BlockState newState = block.defaultBlockState();
